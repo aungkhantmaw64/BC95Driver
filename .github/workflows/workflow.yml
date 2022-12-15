@@ -1,0 +1,24 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the docker image
+      run: docker-compose build
+    
+    - name: Run the test suite
+      run: docker-compose up
+
+    - name: Delete all the containers
+      run: docker-compose down --rmi local

@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+
+  ceedling:
+    build:
+      context: .
+      dockerfile: ceedling.Dockerfile
+    volumes:
+      - .:/home/app
+    command: ceedling gcov:all
