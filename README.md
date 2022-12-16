@@ -4,10 +4,12 @@
 
 ```mermaid
 classDiagram
-    class Modem{
-        +rebootUE(void) void
-        +hardReboot(void) void
-        +isReady(void) bool
+    class ModemController{
+        +Create(SerialIO_t serial, int resetPin)
+        +Destroy() void
+        +RebootUE(void) void
+        +HardReboot(void) void
+        +IsReady(void) bool
     }
 
 ```
