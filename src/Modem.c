@@ -1,4 +1,5 @@
 #include "Modem.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include "TimeService.h"
 #include <string.h>
@@ -56,4 +57,12 @@ int ModemController_RebootUE(ModemController modem)
 int ModemController_IsReady(ModemController modem)
 {
     return (sendATCmd(modem, "AT\r", "OK", 300) == CMD_SUCCESS);
+}
+
+int ModemController_SetUEFunction(ModemController modem, UEFunction_t mode)
+{
+    char cmd[20];
+    memset(cmd, 0, 20);
+    sprintf(cmd, "AT+CFUN=%d\r", mode);
+    return sendATCmd(modem, cmd, "OK", 300);
 }

@@ -92,4 +92,16 @@ void test_ModemIsReadyImmediately(void)
     ModemController modem = ModemController_Create(serialIO, RESET_PIN);
     TEST_ASSERT_EQUAL(1, ModemController_IsReady(modem));
 }
+
+void test_SetModemToFullFunctionalityMode(void)
+{
+    io = getSerialIO(UART_NO, BAUDRATE);
+    SerialIO_Create_ExpectAndReturn(UART_NO, BAUDRATE, io);
+    _mockATCommand(io, "AT+CFUN=1\r", "\r\nOK\r\n");
+
+    SerialIO_t serialIO = SerialIO_Create(UART_NO, BAUDRATE);
+    ModemController modem = ModemController_Create(serialIO, RESET_PIN);
+
+    TEST_ASSERT_EQUAL(CMD_SUCCESS, ModemController_SetUEFunction(modem, UE_LEVEL_FULL));
+}
 #endif // TEST

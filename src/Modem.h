@@ -14,6 +14,12 @@ enum
     CMD_SUCCESS = 0
 };
 
+typedef enum UEFunctionEnum
+{
+    UE_LEVEL_MINIMUM,
+    UE_LEVEL_FULL,
+} UEFunction_t;
+
 struct ModemStruct
 {
     SerialIO_t serial;
@@ -25,5 +31,5 @@ ModemController ModemController_Create(SerialIO_t serial, int resetPin);
 void ModemController_Destroy(ModemController modem);
 int ModemController_RebootUE(ModemController modem);
 int ModemController_IsReady(ModemController modem);
-
+int ModemController_SetUEFunction(ModemController modem, UEFunction_t mode);
 #endif // MODEM_H
