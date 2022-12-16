@@ -2,6 +2,8 @@
 
 ![Tests](https://github.com/aungkhantmaw64/nbiot-driver/actions/workflows/workflow.yml/badge.svg)
 
+## Architectural Diagram
+
 ```mermaid
 classDiagram
     class ModemController{
@@ -35,3 +37,11 @@ classDiagram
     SIM7020E --> SerialIO: implements
 
 ```
+
+## References
+
+- Unit testing - [Unity](https://github.com/ThrowTheSwitch/Unity)
+
+- Mocking - [C Mock](https://github.com/ThrowTheSwitch/CMock)
+
+- Build system - [Ceedling](https://github.com/ThrowTheSwitch/Ceedling)
