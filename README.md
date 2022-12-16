@@ -16,6 +16,7 @@ classDiagram
         +RebootUE(void) int
         +HardReboot(void) int
         +IsReady(void) bool
+        +SetUEFunction(UEFunction func) int
     }
 
     class TimeService{
