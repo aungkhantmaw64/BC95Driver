@@ -1,6 +1,8 @@
-#include "unity.h" // compile/link in Unity test framework
-#include <string.h>
-#include "string_search.h"
+#ifdef TEST
+
+#include "unity.h"
+
+#include "StringSearch.h"
 
 void setUp(void)
 {
@@ -10,11 +12,15 @@ void tearDown(void)
 {
 }
 
-void test_findSubString(void)
+void test_StringSearch(void)
 {
-    TEST_ASSERT_EQUAL_INT(-1, indexOfSubStr("Hi", "Hello"));
-    TEST_ASSERT_EQUAL_INT(-1, indexOfSubStr("Hello", "Hi"));
-    TEST_ASSERT_EQUAL_INT(0, indexOfSubStr("Hello", "Hell"));
-    TEST_ASSERT_EQUAL_INT(2, indexOfSubStr("Hello", "ll"));
-    TEST_ASSERT_EQUAL_INT(-1, indexOfSubStr("Hello", "elo"));
+    TEST_ASSERT_EQUAL_INT(-1, findSubstringIndex("Hello", "Holla"));
+    TEST_ASSERT_EQUAL_INT(2, findSubstringIndex("Hello", "llo"));
+    TEST_ASSERT_EQUAL_INT(4, findSubstringIndex("Hello", "o"));
+    TEST_ASSERT_EQUAL_INT(-1, findSubstringIndex("Hello", "A"));
+    TEST_ASSERT_EQUAL_INT(1, findSubstringIndex("Hello", "ell"));
+    TEST_ASSERT_EQUAL_INT(2, findSubstringIndex("Hello", "l"));
+    TEST_ASSERT_EQUAL_INT(3, findSubstringIndex("Hello", "lo"));
 }
+
+#endif // TEST
