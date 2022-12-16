@@ -38,13 +38,13 @@ void serialIO_create_Stub(CMOCK_serialIO_create_CALLBACK Callback);
 void serialIO_create_CMockIgnoreArg_number(UNITY_LINE_TYPE cmock_line);
 #define serialIO_create_IgnoreArg_baudrate() serialIO_create_CMockIgnoreArg_baudrate(__LINE__)
 void serialIO_create_CMockIgnoreArg_baudrate(UNITY_LINE_TYPE cmock_line);
-#define serialIO_write_IgnoreAndReturn(cmock_retval) serialIO_write_CMockIgnoreAndReturn(__LINE__, cmock_retval)
-void serialIO_write_CMockIgnoreAndReturn(UNITY_LINE_TYPE cmock_line, int cmock_to_return);
+#define serialIO_write_Ignore() serialIO_write_CMockIgnore()
+void serialIO_write_CMockIgnore(void);
 #define serialIO_write_StopIgnore() serialIO_write_CMockStopIgnore()
 void serialIO_write_CMockStopIgnore(void);
-#define serialIO_write_ExpectAndReturn(serial, byte, cmock_retval) serialIO_write_CMockExpectAndReturn(__LINE__, serial, byte, cmock_retval)
-void serialIO_write_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, serialIO_t serial, char byte, int cmock_to_return);
-typedef int (* CMOCK_serialIO_write_CALLBACK)(serialIO_t serial, char byte, int cmock_num_calls);
+#define serialIO_write_Expect(serial, byte) serialIO_write_CMockExpect(__LINE__, serial, byte)
+void serialIO_write_CMockExpect(UNITY_LINE_TYPE cmock_line, serialIO_t serial, char byte);
+typedef void (* CMOCK_serialIO_write_CALLBACK)(serialIO_t serial, char byte, int cmock_num_calls);
 void serialIO_write_AddCallback(CMOCK_serialIO_write_CALLBACK Callback);
 void serialIO_write_Stub(CMOCK_serialIO_write_CALLBACK Callback);
 #define serialIO_write_StubWithCallback serialIO_write_Stub
@@ -52,6 +52,32 @@ void serialIO_write_Stub(CMOCK_serialIO_write_CALLBACK Callback);
 void serialIO_write_CMockIgnoreArg_serial(UNITY_LINE_TYPE cmock_line);
 #define serialIO_write_IgnoreArg_byte() serialIO_write_CMockIgnoreArg_byte(__LINE__)
 void serialIO_write_CMockIgnoreArg_byte(UNITY_LINE_TYPE cmock_line);
+#define serialIO_print_Ignore() serialIO_print_CMockIgnore()
+void serialIO_print_CMockIgnore(void);
+#define serialIO_print_StopIgnore() serialIO_print_CMockStopIgnore()
+void serialIO_print_CMockStopIgnore(void);
+#define serialIO_print_Expect(serial, str) serialIO_print_CMockExpect(__LINE__, serial, str)
+void serialIO_print_CMockExpect(UNITY_LINE_TYPE cmock_line, serialIO_t serial, const char* str);
+typedef void (* CMOCK_serialIO_print_CALLBACK)(serialIO_t serial, const char* str, int cmock_num_calls);
+void serialIO_print_AddCallback(CMOCK_serialIO_print_CALLBACK Callback);
+void serialIO_print_Stub(CMOCK_serialIO_print_CALLBACK Callback);
+#define serialIO_print_StubWithCallback serialIO_print_Stub
+#define serialIO_print_IgnoreArg_serial() serialIO_print_CMockIgnoreArg_serial(__LINE__)
+void serialIO_print_CMockIgnoreArg_serial(UNITY_LINE_TYPE cmock_line);
+#define serialIO_print_IgnoreArg_str() serialIO_print_CMockIgnoreArg_str(__LINE__)
+void serialIO_print_CMockIgnoreArg_str(UNITY_LINE_TYPE cmock_line);
+#define serialIO_isAvailable_IgnoreAndReturn(cmock_retval) serialIO_isAvailable_CMockIgnoreAndReturn(__LINE__, cmock_retval)
+void serialIO_isAvailable_CMockIgnoreAndReturn(UNITY_LINE_TYPE cmock_line, int cmock_to_return);
+#define serialIO_isAvailable_StopIgnore() serialIO_isAvailable_CMockStopIgnore()
+void serialIO_isAvailable_CMockStopIgnore(void);
+#define serialIO_isAvailable_ExpectAndReturn(serial, cmock_retval) serialIO_isAvailable_CMockExpectAndReturn(__LINE__, serial, cmock_retval)
+void serialIO_isAvailable_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, serialIO_t serial, int cmock_to_return);
+typedef int (* CMOCK_serialIO_isAvailable_CALLBACK)(serialIO_t serial, int cmock_num_calls);
+void serialIO_isAvailable_AddCallback(CMOCK_serialIO_isAvailable_CALLBACK Callback);
+void serialIO_isAvailable_Stub(CMOCK_serialIO_isAvailable_CALLBACK Callback);
+#define serialIO_isAvailable_StubWithCallback serialIO_isAvailable_Stub
+#define serialIO_isAvailable_IgnoreArg_serial() serialIO_isAvailable_CMockIgnoreArg_serial(__LINE__)
+void serialIO_isAvailable_CMockIgnoreArg_serial(UNITY_LINE_TYPE cmock_line);
 #define serialIO_read_IgnoreAndReturn(cmock_retval) serialIO_read_CMockIgnoreAndReturn(__LINE__, cmock_retval)
 void serialIO_read_CMockIgnoreAndReturn(UNITY_LINE_TYPE cmock_line, char cmock_to_return);
 #define serialIO_read_StopIgnore() serialIO_read_CMockStopIgnore()
@@ -64,6 +90,26 @@ void serialIO_read_Stub(CMOCK_serialIO_read_CALLBACK Callback);
 #define serialIO_read_StubWithCallback serialIO_read_Stub
 #define serialIO_read_IgnoreArg_serial() serialIO_read_CMockIgnoreArg_serial(__LINE__)
 void serialIO_read_CMockIgnoreArg_serial(UNITY_LINE_TYPE cmock_line);
+#define serialIO_readStringUntil_Ignore() serialIO_readStringUntil_CMockIgnore()
+void serialIO_readStringUntil_CMockIgnore(void);
+#define serialIO_readStringUntil_StopIgnore() serialIO_readStringUntil_CMockStopIgnore()
+void serialIO_readStringUntil_CMockStopIgnore(void);
+#define serialIO_readStringUntil_Expect(serial, end, buffer) serialIO_readStringUntil_CMockExpect(__LINE__, serial, end, buffer)
+void serialIO_readStringUntil_CMockExpect(UNITY_LINE_TYPE cmock_line, serialIO_t serial, char end, char* buffer);
+typedef void (* CMOCK_serialIO_readStringUntil_CALLBACK)(serialIO_t serial, char end, char* buffer, int cmock_num_calls);
+void serialIO_readStringUntil_AddCallback(CMOCK_serialIO_readStringUntil_CALLBACK Callback);
+void serialIO_readStringUntil_Stub(CMOCK_serialIO_readStringUntil_CALLBACK Callback);
+#define serialIO_readStringUntil_StubWithCallback serialIO_readStringUntil_Stub
+#define serialIO_readStringUntil_ReturnThruPtr_buffer(buffer) serialIO_readStringUntil_CMockReturnMemThruPtr_buffer(__LINE__, buffer, sizeof(char))
+#define serialIO_readStringUntil_ReturnArrayThruPtr_buffer(buffer, cmock_len) serialIO_readStringUntil_CMockReturnMemThruPtr_buffer(__LINE__, buffer, cmock_len * sizeof(*buffer))
+#define serialIO_readStringUntil_ReturnMemThruPtr_buffer(buffer, cmock_size) serialIO_readStringUntil_CMockReturnMemThruPtr_buffer(__LINE__, buffer, cmock_size)
+void serialIO_readStringUntil_CMockReturnMemThruPtr_buffer(UNITY_LINE_TYPE cmock_line, char* buffer, size_t cmock_size);
+#define serialIO_readStringUntil_IgnoreArg_serial() serialIO_readStringUntil_CMockIgnoreArg_serial(__LINE__)
+void serialIO_readStringUntil_CMockIgnoreArg_serial(UNITY_LINE_TYPE cmock_line);
+#define serialIO_readStringUntil_IgnoreArg_end() serialIO_readStringUntil_CMockIgnoreArg_end(__LINE__)
+void serialIO_readStringUntil_CMockIgnoreArg_end(UNITY_LINE_TYPE cmock_line);
+#define serialIO_readStringUntil_IgnoreArg_buffer() serialIO_readStringUntil_CMockIgnoreArg_buffer(__LINE__)
+void serialIO_readStringUntil_CMockIgnoreArg_buffer(UNITY_LINE_TYPE cmock_line);
 #define serialIO_destroy_Ignore() serialIO_destroy_CMockIgnore()
 void serialIO_destroy_CMockIgnore(void);
 #define serialIO_destroy_StopIgnore() serialIO_destroy_CMockStopIgnore()

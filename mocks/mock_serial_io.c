@@ -6,13 +6,19 @@
 #include "mock_serial_io.h"
 
 static const char* CMockString_baudrate = "baudrate";
+static const char* CMockString_buffer = "buffer";
 static const char* CMockString_byte = "byte";
+static const char* CMockString_end = "end";
 static const char* CMockString_number = "number";
 static const char* CMockString_serial = "serial";
 static const char* CMockString_serialIO_create = "serialIO_create";
 static const char* CMockString_serialIO_destroy = "serialIO_destroy";
+static const char* CMockString_serialIO_isAvailable = "serialIO_isAvailable";
+static const char* CMockString_serialIO_print = "serialIO_print";
 static const char* CMockString_serialIO_read = "serialIO_read";
+static const char* CMockString_serialIO_readStringUntil = "serialIO_readStringUntil";
 static const char* CMockString_serialIO_write = "serialIO_write";
+static const char* CMockString_str = "str";
 
 typedef struct _CMOCK_serialIO_create_CALL_INSTANCE
 {
@@ -29,7 +35,6 @@ typedef struct _CMOCK_serialIO_create_CALL_INSTANCE
 typedef struct _CMOCK_serialIO_write_CALL_INSTANCE
 {
   UNITY_LINE_TYPE LineNumber;
-  int ReturnVal;
   int CallOrder;
   serialIO_t Expected_serial;
   char Expected_byte;
@@ -37,6 +42,27 @@ typedef struct _CMOCK_serialIO_write_CALL_INSTANCE
   char IgnoreArg_byte;
 
 } CMOCK_serialIO_write_CALL_INSTANCE;
+
+typedef struct _CMOCK_serialIO_print_CALL_INSTANCE
+{
+  UNITY_LINE_TYPE LineNumber;
+  int CallOrder;
+  serialIO_t Expected_serial;
+  const char* Expected_str;
+  char IgnoreArg_serial;
+  char IgnoreArg_str;
+
+} CMOCK_serialIO_print_CALL_INSTANCE;
+
+typedef struct _CMOCK_serialIO_isAvailable_CALL_INSTANCE
+{
+  UNITY_LINE_TYPE LineNumber;
+  int ReturnVal;
+  int CallOrder;
+  serialIO_t Expected_serial;
+  char IgnoreArg_serial;
+
+} CMOCK_serialIO_isAvailable_CALL_INSTANCE;
 
 typedef struct _CMOCK_serialIO_read_CALL_INSTANCE
 {
@@ -47,6 +73,22 @@ typedef struct _CMOCK_serialIO_read_CALL_INSTANCE
   char IgnoreArg_serial;
 
 } CMOCK_serialIO_read_CALL_INSTANCE;
+
+typedef struct _CMOCK_serialIO_readStringUntil_CALL_INSTANCE
+{
+  UNITY_LINE_TYPE LineNumber;
+  int CallOrder;
+  serialIO_t Expected_serial;
+  char Expected_end;
+  char* Expected_buffer;
+  char ReturnThruPtr_buffer_Used;
+  char* ReturnThruPtr_buffer_Val;
+  size_t ReturnThruPtr_buffer_Size;
+  char IgnoreArg_serial;
+  char IgnoreArg_end;
+  char IgnoreArg_buffer;
+
+} CMOCK_serialIO_readStringUntil_CALL_INSTANCE;
 
 typedef struct _CMOCK_serialIO_destroy_CALL_INSTANCE
 {
@@ -66,17 +108,32 @@ static struct mock_serial_ioInstance
   int serialIO_create_CallbackCalls;
   CMOCK_MEM_INDEX_TYPE serialIO_create_CallInstance;
   char serialIO_write_IgnoreBool;
-  int serialIO_write_FinalReturn;
   char serialIO_write_CallbackBool;
   CMOCK_serialIO_write_CALLBACK serialIO_write_CallbackFunctionPointer;
   int serialIO_write_CallbackCalls;
   CMOCK_MEM_INDEX_TYPE serialIO_write_CallInstance;
+  char serialIO_print_IgnoreBool;
+  char serialIO_print_CallbackBool;
+  CMOCK_serialIO_print_CALLBACK serialIO_print_CallbackFunctionPointer;
+  int serialIO_print_CallbackCalls;
+  CMOCK_MEM_INDEX_TYPE serialIO_print_CallInstance;
+  char serialIO_isAvailable_IgnoreBool;
+  int serialIO_isAvailable_FinalReturn;
+  char serialIO_isAvailable_CallbackBool;
+  CMOCK_serialIO_isAvailable_CALLBACK serialIO_isAvailable_CallbackFunctionPointer;
+  int serialIO_isAvailable_CallbackCalls;
+  CMOCK_MEM_INDEX_TYPE serialIO_isAvailable_CallInstance;
   char serialIO_read_IgnoreBool;
   char serialIO_read_FinalReturn;
   char serialIO_read_CallbackBool;
   CMOCK_serialIO_read_CALLBACK serialIO_read_CallbackFunctionPointer;
   int serialIO_read_CallbackCalls;
   CMOCK_MEM_INDEX_TYPE serialIO_read_CallInstance;
+  char serialIO_readStringUntil_IgnoreBool;
+  char serialIO_readStringUntil_CallbackBool;
+  CMOCK_serialIO_readStringUntil_CALLBACK serialIO_readStringUntil_CallbackFunctionPointer;
+  int serialIO_readStringUntil_CallbackCalls;
+  CMOCK_MEM_INDEX_TYPE serialIO_readStringUntil_CallInstance;
   char serialIO_destroy_IgnoreBool;
   char serialIO_destroy_CallbackBool;
   CMOCK_serialIO_destroy_CALLBACK serialIO_destroy_CallbackFunctionPointer;
@@ -118,6 +175,32 @@ void mock_serial_io_Verify(void)
     call_instance = CMOCK_GUTS_NONE;
     (void)call_instance;
   }
+  call_instance = Mock.serialIO_print_CallInstance;
+  if (Mock.serialIO_print_IgnoreBool)
+    call_instance = CMOCK_GUTS_NONE;
+  if (CMOCK_GUTS_NONE != call_instance)
+  {
+    UNITY_SET_DETAIL(CMockString_serialIO_print);
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
+  }
+  if (Mock.serialIO_print_CallbackFunctionPointer != NULL)
+  {
+    call_instance = CMOCK_GUTS_NONE;
+    (void)call_instance;
+  }
+  call_instance = Mock.serialIO_isAvailable_CallInstance;
+  if (Mock.serialIO_isAvailable_IgnoreBool)
+    call_instance = CMOCK_GUTS_NONE;
+  if (CMOCK_GUTS_NONE != call_instance)
+  {
+    UNITY_SET_DETAIL(CMockString_serialIO_isAvailable);
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
+  }
+  if (Mock.serialIO_isAvailable_CallbackFunctionPointer != NULL)
+  {
+    call_instance = CMOCK_GUTS_NONE;
+    (void)call_instance;
+  }
   call_instance = Mock.serialIO_read_CallInstance;
   if (Mock.serialIO_read_IgnoreBool)
     call_instance = CMOCK_GUTS_NONE;
@@ -127,6 +210,19 @@ void mock_serial_io_Verify(void)
     UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
   }
   if (Mock.serialIO_read_CallbackFunctionPointer != NULL)
+  {
+    call_instance = CMOCK_GUTS_NONE;
+    (void)call_instance;
+  }
+  call_instance = Mock.serialIO_readStringUntil_CallInstance;
+  if (Mock.serialIO_readStringUntil_IgnoreBool)
+    call_instance = CMOCK_GUTS_NONE;
+  if (CMOCK_GUTS_NONE != call_instance)
+  {
+    UNITY_SET_DETAIL(CMockString_serialIO_readStringUntil);
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
+  }
+  if (Mock.serialIO_readStringUntil_CallbackFunctionPointer != NULL)
   {
     call_instance = CMOCK_GUTS_NONE;
     (void)call_instance;
@@ -278,7 +374,7 @@ void serialIO_create_CMockIgnoreArg_baudrate(UNITY_LINE_TYPE cmock_line)
   cmock_call_instance->IgnoreArg_baudrate = 1;
 }
 
-int serialIO_write(serialIO_t serial, char byte)
+void serialIO_write(serialIO_t serial, char byte)
 {
   UNITY_LINE_TYPE cmock_line = TEST_LINE_NUM;
   CMOCK_serialIO_write_CALL_INSTANCE* cmock_call_instance;
@@ -288,17 +384,14 @@ int serialIO_write(serialIO_t serial, char byte)
   if (Mock.serialIO_write_IgnoreBool)
   {
     UNITY_CLR_DETAILS();
-    if (cmock_call_instance == NULL)
-      return Mock.serialIO_write_FinalReturn;
-    Mock.serialIO_write_FinalReturn = cmock_call_instance->ReturnVal;
-    return cmock_call_instance->ReturnVal;
+    return;
   }
   if (!Mock.serialIO_write_CallbackBool &&
       Mock.serialIO_write_CallbackFunctionPointer != NULL)
   {
-    int cmock_cb_ret = Mock.serialIO_write_CallbackFunctionPointer(serial, byte, Mock.serialIO_write_CallbackCalls++);
+    Mock.serialIO_write_CallbackFunctionPointer(serial, byte, Mock.serialIO_write_CallbackCalls++);
     UNITY_CLR_DETAILS();
-    return cmock_cb_ret;
+    return;
   }
   UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringCalledMore);
   cmock_line = cmock_call_instance->LineNumber;
@@ -318,10 +411,9 @@ int serialIO_write(serialIO_t serial, char byte)
   }
   if (Mock.serialIO_write_CallbackFunctionPointer != NULL)
   {
-    cmock_call_instance->ReturnVal = Mock.serialIO_write_CallbackFunctionPointer(serial, byte, Mock.serialIO_write_CallbackCalls++);
+    Mock.serialIO_write_CallbackFunctionPointer(serial, byte, Mock.serialIO_write_CallbackCalls++);
   }
   UNITY_CLR_DETAILS();
-  return cmock_call_instance->ReturnVal;
 }
 
 void CMockExpectParameters_serialIO_write(CMOCK_serialIO_write_CALL_INSTANCE* cmock_call_instance, serialIO_t serial, char byte);
@@ -334,27 +426,17 @@ void CMockExpectParameters_serialIO_write(CMOCK_serialIO_write_CALL_INSTANCE* cm
   cmock_call_instance->IgnoreArg_byte = 0;
 }
 
-void serialIO_write_CMockIgnoreAndReturn(UNITY_LINE_TYPE cmock_line, int cmock_to_return)
+void serialIO_write_CMockIgnore(void)
 {
-  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_serialIO_write_CALL_INSTANCE));
-  CMOCK_serialIO_write_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_write_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
-  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
-  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
-  Mock.serialIO_write_CallInstance = CMock_Guts_MemChain(Mock.serialIO_write_CallInstance, cmock_guts_index);
-  Mock.serialIO_write_IgnoreBool = (char)0;
-  cmock_call_instance->LineNumber = cmock_line;
-  cmock_call_instance->ReturnVal = cmock_to_return;
   Mock.serialIO_write_IgnoreBool = (char)1;
 }
 
 void serialIO_write_CMockStopIgnore(void)
 {
-  if(Mock.serialIO_write_IgnoreBool)
-    Mock.serialIO_write_CallInstance = CMock_Guts_MemNext(Mock.serialIO_write_CallInstance);
   Mock.serialIO_write_IgnoreBool = (char)0;
 }
 
-void serialIO_write_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, serialIO_t serial, char byte, int cmock_to_return)
+void serialIO_write_CMockExpect(UNITY_LINE_TYPE cmock_line, serialIO_t serial, char byte)
 {
   CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_serialIO_write_CALL_INSTANCE));
   CMOCK_serialIO_write_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_write_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
@@ -365,7 +447,6 @@ void serialIO_write_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, serialIO_t 
   cmock_call_instance->LineNumber = cmock_line;
   cmock_call_instance->CallOrder = ++GlobalExpectCount;
   CMockExpectParameters_serialIO_write(cmock_call_instance, serial, byte);
-  cmock_call_instance->ReturnVal = cmock_to_return;
 }
 
 void serialIO_write_AddCallback(CMOCK_serialIO_write_CALLBACK Callback)
@@ -394,6 +475,213 @@ void serialIO_write_CMockIgnoreArg_byte(UNITY_LINE_TYPE cmock_line)
   CMOCK_serialIO_write_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_write_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.serialIO_write_CallInstance));
   UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
   cmock_call_instance->IgnoreArg_byte = 1;
+}
+
+void serialIO_print(serialIO_t serial, const char* str)
+{
+  UNITY_LINE_TYPE cmock_line = TEST_LINE_NUM;
+  CMOCK_serialIO_print_CALL_INSTANCE* cmock_call_instance;
+  UNITY_SET_DETAIL(CMockString_serialIO_print);
+  cmock_call_instance = (CMOCK_serialIO_print_CALL_INSTANCE*)CMock_Guts_GetAddressFor(Mock.serialIO_print_CallInstance);
+  Mock.serialIO_print_CallInstance = CMock_Guts_MemNext(Mock.serialIO_print_CallInstance);
+  if (Mock.serialIO_print_IgnoreBool)
+  {
+    UNITY_CLR_DETAILS();
+    return;
+  }
+  if (!Mock.serialIO_print_CallbackBool &&
+      Mock.serialIO_print_CallbackFunctionPointer != NULL)
+  {
+    Mock.serialIO_print_CallbackFunctionPointer(serial, str, Mock.serialIO_print_CallbackCalls++);
+    UNITY_CLR_DETAILS();
+    return;
+  }
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringCalledMore);
+  cmock_line = cmock_call_instance->LineNumber;
+  if (cmock_call_instance->CallOrder > ++GlobalVerifyOrder)
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledEarly);
+  if (cmock_call_instance->CallOrder < GlobalVerifyOrder)
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLate);
+  if (!cmock_call_instance->IgnoreArg_serial)
+  {
+    UNITY_SET_DETAILS(CMockString_serialIO_print,CMockString_serial);
+    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(&cmock_call_instance->Expected_serial), (void*)(&serial), sizeof(serialIO_t), cmock_line, CMockStringMismatch);
+  }
+  if (!cmock_call_instance->IgnoreArg_str)
+  {
+    UNITY_SET_DETAILS(CMockString_serialIO_print,CMockString_str);
+    UNITY_TEST_ASSERT_EQUAL_STRING(cmock_call_instance->Expected_str, str, cmock_line, CMockStringMismatch);
+  }
+  if (Mock.serialIO_print_CallbackFunctionPointer != NULL)
+  {
+    Mock.serialIO_print_CallbackFunctionPointer(serial, str, Mock.serialIO_print_CallbackCalls++);
+  }
+  UNITY_CLR_DETAILS();
+}
+
+void CMockExpectParameters_serialIO_print(CMOCK_serialIO_print_CALL_INSTANCE* cmock_call_instance, serialIO_t serial, const char* str);
+void CMockExpectParameters_serialIO_print(CMOCK_serialIO_print_CALL_INSTANCE* cmock_call_instance, serialIO_t serial, const char* str)
+{
+  memcpy((void*)(&cmock_call_instance->Expected_serial), (void*)(&serial),
+         sizeof(serialIO_t[sizeof(serial) == sizeof(serialIO_t) ? 1 : -1])); /* add serialIO_t to :treat_as_array if this causes an error */
+  cmock_call_instance->IgnoreArg_serial = 0;
+  cmock_call_instance->Expected_str = str;
+  cmock_call_instance->IgnoreArg_str = 0;
+}
+
+void serialIO_print_CMockIgnore(void)
+{
+  Mock.serialIO_print_IgnoreBool = (char)1;
+}
+
+void serialIO_print_CMockStopIgnore(void)
+{
+  Mock.serialIO_print_IgnoreBool = (char)0;
+}
+
+void serialIO_print_CMockExpect(UNITY_LINE_TYPE cmock_line, serialIO_t serial, const char* str)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_serialIO_print_CALL_INSTANCE));
+  CMOCK_serialIO_print_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_print_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.serialIO_print_CallInstance = CMock_Guts_MemChain(Mock.serialIO_print_CallInstance, cmock_guts_index);
+  Mock.serialIO_print_IgnoreBool = (char)0;
+  cmock_call_instance->LineNumber = cmock_line;
+  cmock_call_instance->CallOrder = ++GlobalExpectCount;
+  CMockExpectParameters_serialIO_print(cmock_call_instance, serial, str);
+}
+
+void serialIO_print_AddCallback(CMOCK_serialIO_print_CALLBACK Callback)
+{
+  Mock.serialIO_print_IgnoreBool = (char)0;
+  Mock.serialIO_print_CallbackBool = (char)1;
+  Mock.serialIO_print_CallbackFunctionPointer = Callback;
+}
+
+void serialIO_print_Stub(CMOCK_serialIO_print_CALLBACK Callback)
+{
+  Mock.serialIO_print_IgnoreBool = (char)0;
+  Mock.serialIO_print_CallbackBool = (char)0;
+  Mock.serialIO_print_CallbackFunctionPointer = Callback;
+}
+
+void serialIO_print_CMockIgnoreArg_serial(UNITY_LINE_TYPE cmock_line)
+{
+  CMOCK_serialIO_print_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_print_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.serialIO_print_CallInstance));
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
+  cmock_call_instance->IgnoreArg_serial = 1;
+}
+
+void serialIO_print_CMockIgnoreArg_str(UNITY_LINE_TYPE cmock_line)
+{
+  CMOCK_serialIO_print_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_print_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.serialIO_print_CallInstance));
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
+  cmock_call_instance->IgnoreArg_str = 1;
+}
+
+int serialIO_isAvailable(serialIO_t serial)
+{
+  UNITY_LINE_TYPE cmock_line = TEST_LINE_NUM;
+  CMOCK_serialIO_isAvailable_CALL_INSTANCE* cmock_call_instance;
+  UNITY_SET_DETAIL(CMockString_serialIO_isAvailable);
+  cmock_call_instance = (CMOCK_serialIO_isAvailable_CALL_INSTANCE*)CMock_Guts_GetAddressFor(Mock.serialIO_isAvailable_CallInstance);
+  Mock.serialIO_isAvailable_CallInstance = CMock_Guts_MemNext(Mock.serialIO_isAvailable_CallInstance);
+  if (Mock.serialIO_isAvailable_IgnoreBool)
+  {
+    UNITY_CLR_DETAILS();
+    if (cmock_call_instance == NULL)
+      return Mock.serialIO_isAvailable_FinalReturn;
+    Mock.serialIO_isAvailable_FinalReturn = cmock_call_instance->ReturnVal;
+    return cmock_call_instance->ReturnVal;
+  }
+  if (!Mock.serialIO_isAvailable_CallbackBool &&
+      Mock.serialIO_isAvailable_CallbackFunctionPointer != NULL)
+  {
+    int cmock_cb_ret = Mock.serialIO_isAvailable_CallbackFunctionPointer(serial, Mock.serialIO_isAvailable_CallbackCalls++);
+    UNITY_CLR_DETAILS();
+    return cmock_cb_ret;
+  }
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringCalledMore);
+  cmock_line = cmock_call_instance->LineNumber;
+  if (cmock_call_instance->CallOrder > ++GlobalVerifyOrder)
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledEarly);
+  if (cmock_call_instance->CallOrder < GlobalVerifyOrder)
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLate);
+  if (!cmock_call_instance->IgnoreArg_serial)
+  {
+    UNITY_SET_DETAILS(CMockString_serialIO_isAvailable,CMockString_serial);
+    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(&cmock_call_instance->Expected_serial), (void*)(&serial), sizeof(serialIO_t), cmock_line, CMockStringMismatch);
+  }
+  if (Mock.serialIO_isAvailable_CallbackFunctionPointer != NULL)
+  {
+    cmock_call_instance->ReturnVal = Mock.serialIO_isAvailable_CallbackFunctionPointer(serial, Mock.serialIO_isAvailable_CallbackCalls++);
+  }
+  UNITY_CLR_DETAILS();
+  return cmock_call_instance->ReturnVal;
+}
+
+void CMockExpectParameters_serialIO_isAvailable(CMOCK_serialIO_isAvailable_CALL_INSTANCE* cmock_call_instance, serialIO_t serial);
+void CMockExpectParameters_serialIO_isAvailable(CMOCK_serialIO_isAvailable_CALL_INSTANCE* cmock_call_instance, serialIO_t serial)
+{
+  memcpy((void*)(&cmock_call_instance->Expected_serial), (void*)(&serial),
+         sizeof(serialIO_t[sizeof(serial) == sizeof(serialIO_t) ? 1 : -1])); /* add serialIO_t to :treat_as_array if this causes an error */
+  cmock_call_instance->IgnoreArg_serial = 0;
+}
+
+void serialIO_isAvailable_CMockIgnoreAndReturn(UNITY_LINE_TYPE cmock_line, int cmock_to_return)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_serialIO_isAvailable_CALL_INSTANCE));
+  CMOCK_serialIO_isAvailable_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_isAvailable_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.serialIO_isAvailable_CallInstance = CMock_Guts_MemChain(Mock.serialIO_isAvailable_CallInstance, cmock_guts_index);
+  Mock.serialIO_isAvailable_IgnoreBool = (char)0;
+  cmock_call_instance->LineNumber = cmock_line;
+  cmock_call_instance->ReturnVal = cmock_to_return;
+  Mock.serialIO_isAvailable_IgnoreBool = (char)1;
+}
+
+void serialIO_isAvailable_CMockStopIgnore(void)
+{
+  if(Mock.serialIO_isAvailable_IgnoreBool)
+    Mock.serialIO_isAvailable_CallInstance = CMock_Guts_MemNext(Mock.serialIO_isAvailable_CallInstance);
+  Mock.serialIO_isAvailable_IgnoreBool = (char)0;
+}
+
+void serialIO_isAvailable_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, serialIO_t serial, int cmock_to_return)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_serialIO_isAvailable_CALL_INSTANCE));
+  CMOCK_serialIO_isAvailable_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_isAvailable_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.serialIO_isAvailable_CallInstance = CMock_Guts_MemChain(Mock.serialIO_isAvailable_CallInstance, cmock_guts_index);
+  Mock.serialIO_isAvailable_IgnoreBool = (char)0;
+  cmock_call_instance->LineNumber = cmock_line;
+  cmock_call_instance->CallOrder = ++GlobalExpectCount;
+  CMockExpectParameters_serialIO_isAvailable(cmock_call_instance, serial);
+  cmock_call_instance->ReturnVal = cmock_to_return;
+}
+
+void serialIO_isAvailable_AddCallback(CMOCK_serialIO_isAvailable_CALLBACK Callback)
+{
+  Mock.serialIO_isAvailable_IgnoreBool = (char)0;
+  Mock.serialIO_isAvailable_CallbackBool = (char)1;
+  Mock.serialIO_isAvailable_CallbackFunctionPointer = Callback;
+}
+
+void serialIO_isAvailable_Stub(CMOCK_serialIO_isAvailable_CALLBACK Callback)
+{
+  Mock.serialIO_isAvailable_IgnoreBool = (char)0;
+  Mock.serialIO_isAvailable_CallbackBool = (char)0;
+  Mock.serialIO_isAvailable_CallbackFunctionPointer = Callback;
+}
+
+void serialIO_isAvailable_CMockIgnoreArg_serial(UNITY_LINE_TYPE cmock_line)
+{
+  CMOCK_serialIO_isAvailable_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_isAvailable_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.serialIO_isAvailable_CallInstance));
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
+  cmock_call_instance->IgnoreArg_serial = 1;
 }
 
 char serialIO_read(serialIO_t serial)
@@ -498,6 +786,139 @@ void serialIO_read_CMockIgnoreArg_serial(UNITY_LINE_TYPE cmock_line)
   CMOCK_serialIO_read_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_read_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.serialIO_read_CallInstance));
   UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
   cmock_call_instance->IgnoreArg_serial = 1;
+}
+
+void serialIO_readStringUntil(serialIO_t serial, char end, char* buffer)
+{
+  UNITY_LINE_TYPE cmock_line = TEST_LINE_NUM;
+  CMOCK_serialIO_readStringUntil_CALL_INSTANCE* cmock_call_instance;
+  UNITY_SET_DETAIL(CMockString_serialIO_readStringUntil);
+  cmock_call_instance = (CMOCK_serialIO_readStringUntil_CALL_INSTANCE*)CMock_Guts_GetAddressFor(Mock.serialIO_readStringUntil_CallInstance);
+  Mock.serialIO_readStringUntil_CallInstance = CMock_Guts_MemNext(Mock.serialIO_readStringUntil_CallInstance);
+  if (Mock.serialIO_readStringUntil_IgnoreBool)
+  {
+    UNITY_CLR_DETAILS();
+    return;
+  }
+  if (!Mock.serialIO_readStringUntil_CallbackBool &&
+      Mock.serialIO_readStringUntil_CallbackFunctionPointer != NULL)
+  {
+    Mock.serialIO_readStringUntil_CallbackFunctionPointer(serial, end, buffer, Mock.serialIO_readStringUntil_CallbackCalls++);
+    UNITY_CLR_DETAILS();
+    return;
+  }
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringCalledMore);
+  cmock_line = cmock_call_instance->LineNumber;
+  if (cmock_call_instance->CallOrder > ++GlobalVerifyOrder)
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledEarly);
+  if (cmock_call_instance->CallOrder < GlobalVerifyOrder)
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLate);
+  if (!cmock_call_instance->IgnoreArg_serial)
+  {
+    UNITY_SET_DETAILS(CMockString_serialIO_readStringUntil,CMockString_serial);
+    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(&cmock_call_instance->Expected_serial), (void*)(&serial), sizeof(serialIO_t), cmock_line, CMockStringMismatch);
+  }
+  if (!cmock_call_instance->IgnoreArg_end)
+  {
+    UNITY_SET_DETAILS(CMockString_serialIO_readStringUntil,CMockString_end);
+    UNITY_TEST_ASSERT_EQUAL_INT8(cmock_call_instance->Expected_end, end, cmock_line, CMockStringMismatch);
+  }
+  if (!cmock_call_instance->IgnoreArg_buffer)
+  {
+    UNITY_SET_DETAILS(CMockString_serialIO_readStringUntil,CMockString_buffer);
+    UNITY_TEST_ASSERT_EQUAL_STRING(cmock_call_instance->Expected_buffer, buffer, cmock_line, CMockStringMismatch);
+  }
+  if (Mock.serialIO_readStringUntil_CallbackFunctionPointer != NULL)
+  {
+    Mock.serialIO_readStringUntil_CallbackFunctionPointer(serial, end, buffer, Mock.serialIO_readStringUntil_CallbackCalls++);
+  }
+  if (cmock_call_instance->ReturnThruPtr_buffer_Used)
+  {
+    UNITY_TEST_ASSERT_NOT_NULL(buffer, cmock_line, CMockStringPtrIsNULL);
+    memcpy((void*)buffer, (void*)cmock_call_instance->ReturnThruPtr_buffer_Val,
+      cmock_call_instance->ReturnThruPtr_buffer_Size);
+  }
+  UNITY_CLR_DETAILS();
+}
+
+void CMockExpectParameters_serialIO_readStringUntil(CMOCK_serialIO_readStringUntil_CALL_INSTANCE* cmock_call_instance, serialIO_t serial, char end, char* buffer);
+void CMockExpectParameters_serialIO_readStringUntil(CMOCK_serialIO_readStringUntil_CALL_INSTANCE* cmock_call_instance, serialIO_t serial, char end, char* buffer)
+{
+  memcpy((void*)(&cmock_call_instance->Expected_serial), (void*)(&serial),
+         sizeof(serialIO_t[sizeof(serial) == sizeof(serialIO_t) ? 1 : -1])); /* add serialIO_t to :treat_as_array if this causes an error */
+  cmock_call_instance->IgnoreArg_serial = 0;
+  cmock_call_instance->Expected_end = end;
+  cmock_call_instance->IgnoreArg_end = 0;
+  cmock_call_instance->Expected_buffer = buffer;
+  cmock_call_instance->IgnoreArg_buffer = 0;
+  cmock_call_instance->ReturnThruPtr_buffer_Used = 0;
+}
+
+void serialIO_readStringUntil_CMockIgnore(void)
+{
+  Mock.serialIO_readStringUntil_IgnoreBool = (char)1;
+}
+
+void serialIO_readStringUntil_CMockStopIgnore(void)
+{
+  Mock.serialIO_readStringUntil_IgnoreBool = (char)0;
+}
+
+void serialIO_readStringUntil_CMockExpect(UNITY_LINE_TYPE cmock_line, serialIO_t serial, char end, char* buffer)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_serialIO_readStringUntil_CALL_INSTANCE));
+  CMOCK_serialIO_readStringUntil_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_readStringUntil_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.serialIO_readStringUntil_CallInstance = CMock_Guts_MemChain(Mock.serialIO_readStringUntil_CallInstance, cmock_guts_index);
+  Mock.serialIO_readStringUntil_IgnoreBool = (char)0;
+  cmock_call_instance->LineNumber = cmock_line;
+  cmock_call_instance->CallOrder = ++GlobalExpectCount;
+  CMockExpectParameters_serialIO_readStringUntil(cmock_call_instance, serial, end, buffer);
+}
+
+void serialIO_readStringUntil_AddCallback(CMOCK_serialIO_readStringUntil_CALLBACK Callback)
+{
+  Mock.serialIO_readStringUntil_IgnoreBool = (char)0;
+  Mock.serialIO_readStringUntil_CallbackBool = (char)1;
+  Mock.serialIO_readStringUntil_CallbackFunctionPointer = Callback;
+}
+
+void serialIO_readStringUntil_Stub(CMOCK_serialIO_readStringUntil_CALLBACK Callback)
+{
+  Mock.serialIO_readStringUntil_IgnoreBool = (char)0;
+  Mock.serialIO_readStringUntil_CallbackBool = (char)0;
+  Mock.serialIO_readStringUntil_CallbackFunctionPointer = Callback;
+}
+
+void serialIO_readStringUntil_CMockReturnMemThruPtr_buffer(UNITY_LINE_TYPE cmock_line, char* buffer, size_t cmock_size)
+{
+  CMOCK_serialIO_readStringUntil_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_readStringUntil_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.serialIO_readStringUntil_CallInstance));
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringPtrPreExp);
+  cmock_call_instance->ReturnThruPtr_buffer_Used = 1;
+  cmock_call_instance->ReturnThruPtr_buffer_Val = buffer;
+  cmock_call_instance->ReturnThruPtr_buffer_Size = cmock_size;
+}
+
+void serialIO_readStringUntil_CMockIgnoreArg_serial(UNITY_LINE_TYPE cmock_line)
+{
+  CMOCK_serialIO_readStringUntil_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_readStringUntil_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.serialIO_readStringUntil_CallInstance));
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
+  cmock_call_instance->IgnoreArg_serial = 1;
+}
+
+void serialIO_readStringUntil_CMockIgnoreArg_end(UNITY_LINE_TYPE cmock_line)
+{
+  CMOCK_serialIO_readStringUntil_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_readStringUntil_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.serialIO_readStringUntil_CallInstance));
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
+  cmock_call_instance->IgnoreArg_end = 1;
+}
+
+void serialIO_readStringUntil_CMockIgnoreArg_buffer(UNITY_LINE_TYPE cmock_line)
+{
+  CMOCK_serialIO_readStringUntil_CALL_INSTANCE* cmock_call_instance = (CMOCK_serialIO_readStringUntil_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.serialIO_readStringUntil_CallInstance));
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
+  cmock_call_instance->IgnoreArg_buffer = 1;
 }
 
 void serialIO_destroy(serialIO_t serial)
