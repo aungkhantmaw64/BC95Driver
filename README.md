@@ -13,8 +13,8 @@ classDiagram
     class ModemController{
         +Create(SerialIO_t serial, int resetPin)
         +Destroy() void
-        +RebootUE(void) void
-        +HardReboot(void) void
+        +RebootUE(void) int
+        +HardReboot(void) int
         +IsReady(void) bool
     }
 
