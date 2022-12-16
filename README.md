@@ -53,6 +53,10 @@ classDiagram
     TimeService <-- FakeTimeService: implements
 
 ```
+## Supported Devices
+- [Quectel's BC95-G](https://www.mikroe.com/nb-iot-click)
+
+![NBIOT-Click](./docs/images/nb-iot-click.jpg)
 
 ## References
 
