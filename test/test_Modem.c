@@ -36,6 +36,15 @@ void tearDown(void)
 {
 }
 
+void _mockATCommand(SerialIO_t expected_io, const char *cmd, char *response)
+{
+    SerialIO_Print_Expect(expected_io, cmd);
+    SerialIO_IsAvailable_ExpectAndReturn(expected_io, 7);
+    SerialIO_ReadStringUntil_Expect(expected_io, NULL, '\n', 300);
+    SerialIO_ReadStringUntil_IgnoreArg_buffer();
+    SerialIO_ReadStringUntil_ReturnArrayThruPtr_buffer(response, strlen(response));
+}
+
 void test_CreateSucceeds(void)
 {
     io = getSerialIO(UART_NO, BAUDRATE);
@@ -58,21 +67,18 @@ void test_CreateFailed_WhenSerialIsNULL(void)
 
 void test_RebootUE(void)
 {
-    char *expectedResponse = "\r\nREBOOT\r\n";
     io = getSerialIO(UART_NO, BAUDRATE);
     FakeTimeService_Create(0, 1);
     SerialIO_Create_ExpectAndReturn(UART_NO, BAUDRATE, io);
-    SerialIO_Print_Expect(io, "AT+NRB\r");
-    SerialIO_IsAvailable_ExpectAndReturn(io, 7);
-    SerialIO_ReadStringUntil_Expect(io, NULL, '\n', 300);
-    SerialIO_ReadStringUntil_IgnoreArg_buffer();
-    SerialIO_ReadStringUntil_ReturnArrayThruPtr_buffer(expectedResponse, strlen(expectedResponse));
+    _mockATCommand(io, "AT+NRB\r", "\r\nREBOOT\r\n");
 
     SerialIO_t serialIO = SerialIO_Create(UART_NO, BAUDRATE);
     ModemController modem = ModemController_Create(serialIO, RESET_PIN);
     int retval = ModemController_RebootUE(modem);
-    TEST_ASSERT_EQUAL_STRING(expectedResponse, modem->rxBuffer);
+
+    TEST_ASSERT_EQUAL_STRING("\r\nREBOOT\r\n", modem->rxBuffer);
     TEST_ASSERT_EQUAL_INT(0, retval);
     FakeTimeService_Destroy();
 }
+
 #endif // TEST
