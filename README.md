@@ -16,7 +16,11 @@ classDiagram
         +RebootUE(void) int
         +HardReboot(void) int
         +IsReady(void) bool
-        +SetUEFunction(UEFunction func) int
+        +SetUEFunction(UEFunction_t mode) int
+        +GetIMEI(void) String
+        +GetIMSI(void) String
+        +GetFirmwareVersion(void) String
+        +PingIP(String IP) PingResponse_t
     }
 
     class TimeService{
@@ -30,13 +34,13 @@ classDiagram
 
     class SerialIO{
         <<interface>>
-        +SerialIO_Create(int number, uint32_t baudrate)
-        +SerialIO_Destroy() void
-        +SerialIO_Read() char
-        +SerialIO_Write(char byte) void
-        +SerialIO_ReadStringUntil(char *buffer, char end, uint32_t timeout_ms) void
-    +SerialIO_Print(SerialIO_t serial, const char *text) void
-    +SerialIO_IsAvailable(SerialIO_t serial) int
+        +Create(int number, uint32_t baudrate)
+        +Destroy() void
+        +Read() char
+        +Write(char byte) void
+        +ReadStringUntil(char *buffer, char end, uint32_t timeout_ms) void
+    +Print(const char *text) void
+    +IsAvailable() int
     }
 
     class BC95{
@@ -59,6 +63,10 @@ classDiagram
 
 ![NBIOT-Click](./docs/images/nb-iot-click.jpg)
 
+## Running the tests
+```
+docker-compose up
+```
 ## References
 
 - Unit testing - [Unity](https://github.com/ThrowTheSwitch/Unity)
