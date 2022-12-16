@@ -9,6 +9,7 @@ typedef struct ModemStruct *ModemController;
 
 enum
 {
+    CMD_TIMEOUT_ERROR = -2,
     CMD_FAILED = -1,
     CMD_SUCCESS = 0
 };
@@ -23,6 +24,6 @@ struct ModemStruct
 ModemController ModemController_Create(SerialIO_t serial, int resetPin);
 void ModemController_Destroy(ModemController modem);
 int ModemController_RebootUE(ModemController modem);
-int ModemController_IsReady(void);
+int ModemController_IsReady(ModemController modem);
 
 #endif // MODEM_H

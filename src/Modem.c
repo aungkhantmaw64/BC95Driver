@@ -45,10 +45,15 @@ static int sendATCmd(ModemController modem, const char *cmd, const char *expecte
                 return CMD_FAILED;
         }
     }
-    return CMD_FAILED;
+    return CMD_TIMEOUT_ERROR;
 }
 
 int ModemController_RebootUE(ModemController modem)
 {
     return sendATCmd(modem, "AT+NRB\r", "REBOOT", 300);
+}
+
+int ModemController_IsReady(ModemController modem)
+{
+    return (sendATCmd(modem, "AT\r", "OK", 300) == CMD_SUCCESS);
 }
