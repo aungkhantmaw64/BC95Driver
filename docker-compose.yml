@@ -8,4 +8,4 @@ services:
       dockerfile: ceedling.Dockerfile
     volumes:
       - .:/home/app
-    command: ceedling gcov:all
+    command: bash scripts/test.sh
