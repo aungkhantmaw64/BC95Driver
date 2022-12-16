@@ -77,7 +77,7 @@ void test_RebootUE(void)
     int retval = ModemController_RebootUE(modem);
 
     TEST_ASSERT_EQUAL_STRING("\r\nREBOOT\r\n", modem->rxBuffer);
-    TEST_ASSERT_EQUAL_INT(0, retval);
+    TEST_ASSERT_EQUAL_INT(CMD_SUCCESS, retval);
     FakeTimeService_Destroy();
 }
 

@@ -7,6 +7,12 @@ typedef struct ModemStruct *ModemController;
 
 #define MAX_BUFFER_SIZE 50
 
+enum
+{
+    CMD_FAILED = -1,
+    CMD_SUCCESS = 0
+};
+
 struct ModemStruct
 {
     SerialIO_t serial;

@@ -30,20 +30,25 @@ void ModemController_Destroy(ModemController modem)
         free(modem);
 }
 
-int ModemController_RebootUE(ModemController modem)
+static int sendATCmd(ModemController modem, const char *cmd, const char *expected_reponse, uint32_t timeout_ms)
 {
-    SerialIO_Print(modem->serial, "AT+NRB\r");
-    uint32_t time = getMillis();
-    while ((getMillis() - time) < 300)
+    SerialIO_Print(modem->serial, cmd);
+    uint32_t current = getMillis();
+    while ((getMillis() - current) < timeout_ms)
     {
         if (SerialIO_IsAvailable(modem->serial) > 0)
         {
             SerialIO_ReadStringUntil(modem->serial, modem->rxBuffer, '\n', 300);
-            if (findSubstringIndex(modem->rxBuffer, "REBOOT") >= 0)
-                return 0;
+            if (findSubstringIndex(modem->rxBuffer, expected_reponse) >= 0)
+                return CMD_SUCCESS;
             else
-                return -1;
+                return CMD_FAILED;
         }
     }
-    return -1;
+    return CMD_FAILED;
+}
+
+int ModemController_RebootUE(ModemController modem)
+{
+    return sendATCmd(modem, "AT+NRB\r", "REBOOT", 300);
 }
