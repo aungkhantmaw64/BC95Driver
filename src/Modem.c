@@ -19,7 +19,7 @@ ModemController ModemController_Create(SerialIO_t serial, int resetPin)
 {
     if (!serial)
         return NULL;
-    ModemController modem = calloc(1, sizeof(struct ModemStruct));
+    ModemController modem = calloc(1, sizeof(struct ModemControllerStruct));
     modem->serial = serial;
     modem->resetPin = resetPin;
     return modem;
@@ -39,8 +39,8 @@ static int sendATCmd(ModemController modem, const char *cmd, const char *expecte
     {
         if (SerialIO_IsAvailable(modem->serial) > 0)
         {
-            SerialIO_ReadStringUntil(modem->serial, modem->rxBuffer, '\n', 300);
-            if (findSubstringIndex(modem->rxBuffer, expected_reponse) >= 0)
+            SerialIO_ReadStringUntil(modem->serial, modem->responseBuffer, '\n', 300);
+            if (findSubstringIndex(modem->responseBuffer, expected_reponse) >= 0)
                 return CMD_SUCCESS;
             else
                 return CMD_FAILED;
