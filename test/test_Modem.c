@@ -67,7 +67,7 @@ void test_RebootUE(void)
 
     int retval = ModemController_RebootUE(modem);
 
-    TEST_ASSERT_EQUAL_STRING("\r\nREBOOT\r\n", modem->rxBuffer);
+    TEST_ASSERT_EQUAL_STRING("\r\nREBOOT\r\n", modem->responseBuffer);
     TEST_ASSERT_EQUAL_INT(CMD_SUCCESS, retval);
 }
 
@@ -84,4 +84,9 @@ void test_SetModemToFullFunctionalityMode(void)
 
     TEST_ASSERT_EQUAL(CMD_SUCCESS, ModemController_SetUEFunction(modem, UE_LEVEL_FULL));
 }
+
+// void test_GetIMEI(void)
+// {
+//     _mockATCommand(io, "AT+CGSN=1\r", "\r\n+CGSN:490154203237511\n\n\nOK\r\n");
+// }
 #endif // TEST
