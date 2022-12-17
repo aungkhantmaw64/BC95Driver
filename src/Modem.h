@@ -44,7 +44,7 @@ void ModemController_Destroy(ModemController modem);
 /**
  * @brief Reboot the modem by software
  *
- * @param modem The modem
+ * @param modem The pointer to modem
  * @return Command reponse status
  */
 int ModemController_RebootUE(ModemController modem);
@@ -52,17 +52,26 @@ int ModemController_RebootUE(ModemController modem);
  * @brief Check if the connection to the modem is correct
  *        and ready to receive commands
  *
- * @param modem The modem
+ * @param modem The pointer to modem
  * @return 1 if ready. 0 if not.
  */
 int ModemController_IsReady(ModemController modem);
 /**
  * @brief Set the UE phone function
  *
- * @param modem The modem
+ * @param modem The pointer to modem
  * @param mode Functionality level
  * @return Command response status
  */
 int ModemController_SetUEFunction(ModemController modem, UEFunction_t mode);
+
+/**
+ * @brief Request Module's IMEI
+ *
+ * @param modem The pointer to modem
+ * @param buffer Buffer to store IMEI
+ * @return Command response status
+ */
+int ModemController_GetIMEI(ModemController modem, char *buffer);
 
 #endif // MODEM_H

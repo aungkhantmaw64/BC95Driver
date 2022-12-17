@@ -31,7 +31,7 @@ static ModemController modem = NULL;
 
 void setUp(void)
 {
-    FakeTimeService_Create(0, 100);
+    FakeTimeService_Create(0, 1);
     io = getSerialIO(UART_NO, BAUDRATE);
     SerialIO_Create_ExpectAndReturn(UART_NO, BAUDRATE, io);
 
@@ -45,15 +45,6 @@ void tearDown(void)
     ModemController_Destroy(modem);
 }
 
-static void _mockATCommand(SerialIO_t expected_io, const char *cmd, char *response)
-{
-    SerialIO_Print_Expect(expected_io, cmd);
-    SerialIO_IsAvailable_ExpectAndReturn(expected_io, 7);
-    SerialIO_ReadStringUntil_Expect(expected_io, NULL, '\n', 300);
-    SerialIO_ReadStringUntil_IgnoreArg_buffer();
-    SerialIO_ReadStringUntil_ReturnArrayThruPtr_buffer(response, strlen(response));
-}
-
 void test_CreateSucceeds(void)
 {
     TEST_ASSERT_NOT_NULL(modem);
@@ -61,32 +52,55 @@ void test_CreateSucceeds(void)
     TEST_ASSERT_EQUAL(RESET_PIN, modem->resetPin);
 }
 
+void _expectAStringInBuffer(SerialIO_t expectedIO, char *expectedString, char endChar)
+{
+    /* _Ignore cannot be used after _Expect*/
+    SerialIO_IsAvailable_IgnoreAndReturn(strlen(expectedString));
+    SerialIO_ReadStringUntil_Expect(expectedIO, NULL, endChar, 300);
+    SerialIO_ReadStringUntil_IgnoreArg_buffer();
+    SerialIO_ReadStringUntil_ReturnArrayThruPtr_buffer(expectedString, strlen(expectedString));
+}
+
 void test_RebootUE(void)
 {
-    _mockATCommand(io, "AT+NRB\r", "\r\nREBOOT\r\n");
-
+    SerialIO_Print_Expect(io, "AT+NRB\r");
+    _expectAStringInBuffer(io, "\r", '\n');
+    _expectAStringInBuffer(io, "REBOOTING\r", '\n');
+    SerialIO_IsAvailable_IgnoreAndReturn(0);
     int retval = ModemController_RebootUE(modem);
 
-    TEST_ASSERT_EQUAL_STRING("\r\nREBOOT\r\n", modem->responseBuffer);
     TEST_ASSERT_EQUAL_INT(CMD_SUCCESS, retval);
 }
 
 void test_ModemIsReadyImmediately(void)
 {
-    _mockATCommand(io, "AT\r", "\r\nOK\r\n");
-
+    SerialIO_Print_Expect(io, "AT\r");
+    _expectAStringInBuffer(io, "\r", '\n');
+    _expectAStringInBuffer(io, "OK\r", '\n');
+    SerialIO_IsAvailable_IgnoreAndReturn(0);
     TEST_ASSERT_EQUAL(1, ModemController_IsReady(modem));
 }
 
 void test_SetModemToFullFunctionalityMode(void)
 {
-    _mockATCommand(io, "AT+CFUN=1\r", "\r\nOK\r\n");
-
+    SerialIO_Print_Expect(io, "AT+CFUN=1\r");
+    _expectAStringInBuffer(io, "\r", '\n');
+    _expectAStringInBuffer(io, "OK\r", '\n');
+    SerialIO_IsAvailable_IgnoreAndReturn(0);
     TEST_ASSERT_EQUAL(CMD_SUCCESS, ModemController_SetUEFunction(modem, UE_LEVEL_FULL));
 }
 
-// void test_GetIMEI(void)
-// {
-//     _mockATCommand(io, "AT+CGSN=1\r", "\r\n+CGSN:490154203237511\n\n\nOK\r\n");
-// }
+void test_GetModuleIMEI(void)
+{
+    SerialIO_Print_Expect(io, "AT+CGSN=1\r");
+    _expectAStringInBuffer(io, "\r", '\n');
+    _expectAStringInBuffer(io, "+CGSN:490154203237511\n", '\n');
+    _expectAStringInBuffer(io, "OK\r", '\n');
+    SerialIO_IsAvailable_IgnoreAndReturn(0);
+
+    char imei[20];
+    TEST_ASSERT_EQUAL(CMD_SUCCESS, ModemController_GetIMEI(modem, imei));
+    TEST_ASSERT_EQUAL_STRING("490154203237511", imei);
+}
+
 #endif // TEST
