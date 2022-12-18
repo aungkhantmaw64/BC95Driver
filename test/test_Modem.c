@@ -5,7 +5,7 @@
 #include "Modem.h"
 #include "mock_SerialIO.h"
 #include "FakeTimeService.h"
-
+#include "mock_SubStringSearch.h"
 #include <string.h>
 
 #define UART_NO 2
@@ -61,12 +61,25 @@ void _expectAStringInBuffer(SerialIO_t expectedIO, char *expectedString, char en
     SerialIO_ReadStringUntil_ReturnArrayThruPtr_buffer(expectedString, strlen(expectedString));
 }
 
+void test_SendATCmd(void)
+{
+    SerialIO_Print_Expect(io, "AT+CGSN=1\r");
+    _expectAStringInBuffer(io, "\r\n", '\n');
+    _expectAStringInBuffer(io, "+CGSN:490154203237511\n", '\n');
+    _expectAStringInBuffer(io, "OK\r\n", '\n');
+    SerialIO_IsAvailable_IgnoreAndReturn(0);
+
+    ModemController_sendATCmd(modem, "AT+CGSN=1\r");
+    TEST_ASSERT_EQUAL_STRING("\r\n+CGSN:490154203237511\nOK\r\n", modem->responseBuffer);
+}
+
 void test_RebootUE(void)
 {
     SerialIO_Print_Expect(io, "AT+NRB\r");
-    _expectAStringInBuffer(io, "\r", '\n');
-    _expectAStringInBuffer(io, "REBOOTING\r", '\n');
+    _expectAStringInBuffer(io, "\r\n", '\n');
+    _expectAStringInBuffer(io, "REBOOTING\r\n", '\n');
     SerialIO_IsAvailable_IgnoreAndReturn(0);
+    findSubstringIndex_ExpectAndReturn("\r\nREBOOTING\r\n", "REBOOT", 2);
     int retval = ModemController_RebootUE(modem);
 
     TEST_ASSERT_EQUAL_INT(CMD_SUCCESS, retval);
@@ -75,31 +88,37 @@ void test_RebootUE(void)
 void test_ModemIsReadyImmediately(void)
 {
     SerialIO_Print_Expect(io, "AT\r");
-    _expectAStringInBuffer(io, "\r", '\n');
-    _expectAStringInBuffer(io, "OK\r", '\n');
+    _expectAStringInBuffer(io, "\r\n", '\n');
+    _expectAStringInBuffer(io, "OK\r\n", '\n');
     SerialIO_IsAvailable_IgnoreAndReturn(0);
+    findSubstringIndex_ExpectAndReturn("\r\nOK\r\n", "OK", 2);
     TEST_ASSERT_EQUAL(1, ModemController_IsReady(modem));
 }
 
 void test_SetModemToFullFunctionalityMode(void)
 {
     SerialIO_Print_Expect(io, "AT+CFUN=1\r");
-    _expectAStringInBuffer(io, "\r", '\n');
-    _expectAStringInBuffer(io, "OK\r", '\n');
+    _expectAStringInBuffer(io, "\r\n", '\n');
+    _expectAStringInBuffer(io, "OK\r\n", '\n');
     SerialIO_IsAvailable_IgnoreAndReturn(0);
+    findSubstringIndex_ExpectAndReturn("\r\nOK\r\n", "OK", 2);
     TEST_ASSERT_EQUAL(CMD_SUCCESS, ModemController_SetUEFunction(modem, UE_LEVEL_FULL));
 }
 
 void test_GetModuleIMEI(void)
 {
     SerialIO_Print_Expect(io, "AT+CGSN=1\r");
-    _expectAStringInBuffer(io, "\r", '\n');
+    _expectAStringInBuffer(io, "\r\n", '\n');
     _expectAStringInBuffer(io, "+CGSN:490154203237511\n", '\n');
-    _expectAStringInBuffer(io, "OK\r", '\n');
+    _expectAStringInBuffer(io, "OK\r\n", '\n');
     SerialIO_IsAvailable_IgnoreAndReturn(0);
+    findSubstringIndex_ExpectAndReturn("\r\n+CGSN:490154203237511\nOK\r\n", "OK", 24);
+    findSubstringIndex_ExpectAndReturn("\r\n+CGSN:490154203237511\nOK\r\n", "+CGSN:", 2);
 
     char imei[20];
-    TEST_ASSERT_EQUAL(CMD_SUCCESS, ModemController_GetIMEI(modem, imei));
+    int retval = ModemController_GetIMEI(modem, imei);
+    TEST_ASSERT_EQUAL_STRING("\r\n+CGSN:490154203237511\nOK\r\n", modem->responseBuffer);
+    TEST_ASSERT_EQUAL(CMD_SUCCESS, retval);
     TEST_ASSERT_EQUAL_STRING("490154203237511", imei);
 }
 

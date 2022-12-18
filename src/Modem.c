@@ -4,16 +4,9 @@
 #include "TimeService.h"
 #include <string.h>
 #include <memory.h>
+#include "SubStringSearch.h"
 
 #define MODEM_BAUDRATE 9600
-
-int findSubstringIndex(const char *main_str, const char *sub_str)
-{
-    char *temp = strstr(main_str, sub_str);
-    if (!temp)
-        return -1;
-    return temp - main_str;
-}
 
 ModemController ModemController_Create(SerialIO_t serial, int resetPin)
 {
@@ -31,17 +24,17 @@ void ModemController_Destroy(ModemController modem)
         free(modem);
 }
 
-static void _sendATCmd(ModemController modem, const char *cmd)
+void ModemController_sendATCmd(ModemController modem, const char *cmd)
 {
     SerialIO_Print(modem->serial, cmd);
     uint32_t startTime = getMillis();
     char temp[MAX_BUFFER_SIZE];
-    memset(temp, 0, MAX_BUFFER_SIZE);
     memset(modem->responseBuffer, 0, MAX_BUFFER_SIZE);
     while ((getMillis() - startTime) < 300)
     {
         if (SerialIO_IsAvailable(modem->serial) > 0)
         {
+            memset(temp, 0, MAX_BUFFER_SIZE);
             SerialIO_ReadStringUntil(modem->serial, temp, '\n', 300);
             if (strlen(modem->responseBuffer) == 0)
                 strcpy(modem->responseBuffer, temp);
@@ -71,25 +64,25 @@ static int _hasValidResponse(ModemController modem)
 
 int ModemController_RebootUE(ModemController modem)
 {
-    _sendATCmd(modem, "AT+NRB\r");
+    ModemController_sendATCmd(modem, "AT+NRB\r");
     return _checkResponseStatus(modem, "REBOOT");
 }
 
 int ModemController_IsReady(ModemController modem)
 {
-    _sendATCmd(modem, "AT\r");
+    ModemController_sendATCmd(modem, "AT\r");
     return _hasValidResponse(modem);
 }
 
 int ModemController_SetUEFunction(ModemController modem, UEFunction_t mode)
 {
-    _sendATCmd(modem, "AT+CFUN=1\r");
+    ModemController_sendATCmd(modem, "AT+CFUN=1\r");
     return _checkResponseStatus(modem, "OK");
 }
 
 int ModemController_GetIMEI(ModemController modem, char *buffer)
 {
-    _sendATCmd(modem, "AT+CGSN=1\r");
+    ModemController_sendATCmd(modem, "AT+CGSN=1\r");
     int buffSize = sizeof(buffer) / sizeof(char);
     memset(buffer, 0, buffSize);
     int resStatus = _checkResponseStatus(modem, "OK");

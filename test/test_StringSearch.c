@@ -2,7 +2,7 @@
 
 #include "unity.h"
 
-#include "StringSearch.h"
+#include "SubStringSearch.h"
 
 void setUp(void)
 {

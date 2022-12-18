@@ -41,6 +41,14 @@ ModemController ModemController_Create(SerialIO_t serial, int resetPin);
  * @param modem The modem
  */
 void ModemController_Destroy(ModemController modem);
+
+/**
+ * @brief
+ *
+ * @param modem
+ * @param cmd
+ */
+void ModemController_sendATCmd(ModemController modem, const char *cmd);
 /**
  * @brief Reboot the modem by software
  *
