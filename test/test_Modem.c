@@ -122,4 +122,19 @@ void test_GetModuleIMEI(void)
     TEST_ASSERT_EQUAL_STRING("490154203237511", imei);
 }
 
+void test_ModemControllerIsNotConnectedToNetwork(void)
+{
+    SerialIO_Print_Expect(io, "AT+CGATT?\r");
+    _expectAStringInBuffer(io, "\r\n", '\n');
+    _expectAStringInBuffer(io, "+CGATT:0\n", '\n');
+    _expectAStringInBuffer(io, "OK\r\n", '\n');
+    SerialIO_IsAvailable_IgnoreAndReturn(0);
+    findSubstringIndex_ExpectAndReturn("\r\n+CGATT:0\nOK\r\n", "OK", 24);
+    findSubstringIndex_ExpectAndReturn("\r\n+CGATT:0\nOK\r\n", "+CGATT:", 2);
+
+    int retval = ModemController_IsNetworkConnected(modem);
+
+    TEST_ASSERT_FALSE(retval);
+}
+
 #endif // TEST

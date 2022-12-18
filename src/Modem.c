@@ -80,19 +80,47 @@ int ModemController_SetUEFunction(ModemController modem, UEFunction_t mode)
     return _checkResponseStatus(modem, "OK");
 }
 
-int ModemController_GetIMEI(ModemController modem, char *buffer)
+/* main_str: Target String
+ *  from_: starts extracting from the end index of this substring until 'end'
+ * dest: destination to store the extracted string
+ */
+static void _extractString(char *target_str, char *from_, char end, char *dest)
+{
+
+    int t = findSubstringIndex(target_str, from_) + strlen(from_);
+    int i = 0;
+    while (target_str[t] != end)
+    {
+        dest[i++] = target_str[t++];
+    }
+}
+
+int ModemController_GetIMEI(ModemController modem, char *dest)
 {
     ModemController_sendATCmd(modem, "AT+CGSN=1\r");
-    int buffSize = sizeof(buffer) / sizeof(char);
-    memset(buffer, 0, buffSize);
     int resStatus = _checkResponseStatus(modem, "OK");
     if (resStatus != CMD_SUCCESS)
         return resStatus;
-    int index = findSubstringIndex(modem->responseBuffer, "+CGSN:") + strlen("+CGSN:");
-    int buffer_i = 0;
-    while (modem->responseBuffer[index] != '\n')
+    else
     {
-        buffer[buffer_i++] = modem->responseBuffer[index++];
+        int buffSize = sizeof(dest) / sizeof(char);
+        memset(dest, 0, buffSize);
+        _extractString(modem->responseBuffer, "+CGSN:", '\n', dest);
+        return resStatus;
     }
-    return resStatus;
+}
+
+int ModemController_IsNetworkConnected(ModemController modem)
+{
+    ModemController_sendATCmd(modem, "AT+CGATT?\r");
+    int resStatus = _checkResponseStatus(modem, "OK");
+    if (resStatus != CMD_SUCCESS)
+        return 0;
+    else
+    {
+        char currentMode[2];
+        memset(currentMode, 0, 2);
+        _extractString(modem->responseBuffer, "+CGATT:", '\n', currentMode);
+        return (strcmp("1", currentMode) == 0);
+    }
 }

@@ -80,6 +80,14 @@ int ModemController_SetUEFunction(ModemController modem, UEFunction_t mode);
  * @param buffer Buffer to store IMEI
  * @return Command response status
  */
-int ModemController_GetIMEI(ModemController modem, char *buffer);
+int ModemController_GetIMEI(ModemController modem, char *dest);
+
+/**
+ * @brief
+ *
+ * @param modem
+ * @return int
+ */
+int ModemController_IsNetworkConnected(ModemController modem);
 
 #endif // MODEM_H
