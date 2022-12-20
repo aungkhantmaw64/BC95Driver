@@ -24,7 +24,7 @@ void ModemController_Destroy(ModemController modem)
         free(modem);
 }
 
-void ModemController_sendATCmd(ModemController modem, const char *cmd)
+void ModemController_SendATCmd(ModemController modem, const char *cmd)
 {
     SerialIO_Print(modem->serial, cmd);
     uint32_t startTime = getMillis();
@@ -64,19 +64,19 @@ static int _hasValidResponse(ModemController modem)
 
 int ModemController_RebootUE(ModemController modem)
 {
-    ModemController_sendATCmd(modem, "AT+NRB\r");
+    ModemController_SendATCmd(modem, "AT+NRB\r");
     return _checkResponseStatus(modem, "REBOOT");
 }
 
 int ModemController_IsReady(ModemController modem)
 {
-    ModemController_sendATCmd(modem, "AT\r");
+    ModemController_SendATCmd(modem, "AT\r");
     return _hasValidResponse(modem);
 }
 
 int ModemController_SetUEFunction(ModemController modem, UEFunction_t mode)
 {
-    ModemController_sendATCmd(modem, "AT+CFUN=1\r");
+    ModemController_SendATCmd(modem, "AT+CFUN=1\r");
     return _checkResponseStatus(modem, "OK");
 }
 
@@ -97,7 +97,7 @@ static void _extractString(char *target_str, char *from_, char end, char *dest)
 
 int ModemController_GetIMEI(ModemController modem, char *dest)
 {
-    ModemController_sendATCmd(modem, "AT+CGSN=1\r");
+    ModemController_SendATCmd(modem, "AT+CGSN=1\r");
     int resStatus = _checkResponseStatus(modem, "OK");
     if (resStatus != CMD_SUCCESS)
         return resStatus;
@@ -110,9 +110,14 @@ int ModemController_GetIMEI(ModemController modem, char *dest)
     }
 }
 
+int ModemController_GetIMSI(ModemController modem, char *dest)
+{
+    return -1;
+}
+
 int ModemController_IsNetworkConnected(ModemController modem)
 {
-    ModemController_sendATCmd(modem, "AT+CGATT?\r");
+    ModemController_SendATCmd(modem, "AT+CGATT?\r");
     int resStatus = _checkResponseStatus(modem, "OK");
     if (resStatus != CMD_SUCCESS)
         return 0;
