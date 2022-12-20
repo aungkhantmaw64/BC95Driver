@@ -62,6 +62,26 @@ static int _hasValidResponse(ModemController modem)
     return (_checkResponseStatus(modem, "OK") == CMD_SUCCESS);
 }
 
+static void _clearBuffer(char *buffer)
+{
+    int _size = sizeof(buffer) / sizeof(char);
+    memset(buffer, 0, _size);
+}
+
+/* This function find a string between from_ and to_ in target_str.
+Then, put it in dest*/
+
+static void _getSubstring(char *target_str, char *from_, char to_, char *dest)
+{
+
+    int t = findSubstringIndex(target_str, from_) + strlen(from_);
+    int i = 0;
+    while (target_str[t] != to_)
+    {
+        dest[i++] = target_str[t++];
+    }
+}
+
 int ModemController_RebootUE(ModemController modem)
 {
     ModemController_SendATCmd(modem, "AT+NRB\r");
@@ -84,16 +104,6 @@ int ModemController_SetUEFunction(ModemController modem, UEFunction_t mode)
  *  from_: starts extracting from the end index of this substring until 'end'
  * dest: destination to store the extracted string
  */
-static void _extractString(char *target_str, char *from_, char end, char *dest)
-{
-
-    int t = findSubstringIndex(target_str, from_) + strlen(from_);
-    int i = 0;
-    while (target_str[t] != end)
-    {
-        dest[i++] = target_str[t++];
-    }
-}
 
 int ModemController_GetIMEI(ModemController modem, char *dest)
 {
@@ -103,16 +113,29 @@ int ModemController_GetIMEI(ModemController modem, char *dest)
         return resStatus;
     else
     {
-        int buffSize = sizeof(dest) / sizeof(char);
-        memset(dest, 0, buffSize);
-        _extractString(modem->responseBuffer, "+CGSN:", '\n', dest);
+        _clearBuffer(dest);
+        _getSubstring(modem->responseBuffer, "+CGSN:", '\n', dest);
         return resStatus;
     }
 }
 
 int ModemController_GetIMSI(ModemController modem, char *dest)
 {
-    return -1;
+    ModemController_SendATCmd(modem, "AT+CIMI\r");
+    int resStatus = _checkResponseStatus(modem, "OK");
+    if (resStatus != CMD_SUCCESS)
+        return resStatus;
+    else
+    {
+        _clearBuffer(dest);
+        int idx = 2; /* Starts with 2 since 0 and 1 are \r\n*/
+        while (modem->responseBuffer[idx] != '\r')
+        {
+            dest[idx - 2] = modem->responseBuffer[idx];
+            idx++;
+        }
+        return resStatus;
+    }
 }
 
 int ModemController_IsNetworkConnected(ModemController modem)
@@ -123,9 +146,9 @@ int ModemController_IsNetworkConnected(ModemController modem)
         return 0;
     else
     {
-        char currentMode[2];
-        memset(currentMode, 0, 2);
-        _extractString(modem->responseBuffer, "+CGATT:", '\n', currentMode);
-        return (strcmp("1", currentMode) == 0);
+        char state[2];
+        memset(state, 0, 2);
+        _getSubstring(modem->responseBuffer, "+CGATT:", '\r', state);
+        return (strcmp("1", state) == 0);
     }
 }

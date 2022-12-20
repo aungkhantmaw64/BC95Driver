@@ -94,7 +94,8 @@ void test_SendATCmd(void)
 {
     _ATCommandSend("AT+CGSN=1\r");
     _ModuleRespondBackWith("\r\n");
-    _ModuleRespondBackWith("+CGSN:490154203237511\n");
+    _ModuleRespondBackWith("+CGSN:490154203237511\r\n");
+    _ModuleRespondBackWith("\r\n");
     _ModuleRespondBackWith("OK\r\n");
     _ModuleRespondBackWith(NULL);
 
@@ -151,6 +152,7 @@ void test_GetModuleIMEI_Succeeds(void)
     _ATCommandSend("AT+CGSN=1\r");
     _ModuleRespondBackWith("\r\n");
     _ModuleRespondBackWith("+CGSN:490154203237511\n");
+    _ModuleRespondBackWith("\r\n");
     _ModuleRespondBackWith("OK\r\n");
     _ModuleRespondBackWith(NULL);
 
@@ -167,11 +169,35 @@ void test_GetModuleIMEI_Succeeds(void)
     TEST_ASSERT_EQUAL_STRING("490154203237511", imei);
 }
 
-void test_ModemControllerIsNotConnectedToNetwork(void)
+void test_GetModuleIMSI_Succeeds(void)
+{
+
+    _ATCommandSend("AT+CIMI\r");
+    _ModuleRespondBackWith("\r\n");
+    _ModuleRespondBackWith("460111174590523\r\n");
+    _ModuleRespondBackWith("\r\n");
+    _ModuleRespondBackWith("\r\n");
+    _ModuleRespondBackWith("OK\r\n");
+    _ModuleRespondBackWith(NULL);
+
+    int okIndex = strlen(expected_response) - strlen("OK\r\n");
+
+    _ResponseContainsGivenPhraseAt("OK", okIndex);
+
+    char imsi[20];
+    int retval = ModemController_GetIMSI(modem, imsi);
+
+    TEST_ASSERT_EQUAL_STRING(expected_response, modem->responseBuffer);
+    TEST_ASSERT_EQUAL(CMD_SUCCESS, retval);
+    TEST_ASSERT_EQUAL_STRING("460111174590523", imsi);
+}
+
+void test_ModemControllerIsConnectedToNetwork(void)
 {
     _ATCommandSend("AT+CGATT?\r");
     _ModuleRespondBackWith("\r\n");
-    _ModuleRespondBackWith("+CGATT:0\n");
+    _ModuleRespondBackWith("+CGATT:1\r\n");
+    _ModuleRespondBackWith("\r\n");
     _ModuleRespondBackWith("OK\r\n");
     _ModuleRespondBackWith(NULL);
 
@@ -182,7 +208,7 @@ void test_ModemControllerIsNotConnectedToNetwork(void)
 
     int retval = ModemController_IsNetworkConnected(modem);
 
-    TEST_ASSERT_FALSE(retval);
+    TEST_ASSERT_TRUE(retval);
 }
 
 #endif // TEST
