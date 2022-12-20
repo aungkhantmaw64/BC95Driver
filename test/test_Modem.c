@@ -49,14 +49,7 @@ void tearDown(void)
     ModemController_Destroy(modem);
 }
 
-void test_CreateSucceeds(void)
-{
-    TEST_ASSERT_NOT_NULL(modem);
-    TEST_ASSERT_EQUAL(io, modem->serial);
-    TEST_ASSERT_EQUAL(RESET_PIN, modem->resetPin);
-}
-
-void _ModuleRespondBackWith(char *expectedString)
+static void _ModuleRespondBackWith(char *expectedString)
 {
     /* _Ignore cannot be used after _Expect*/
     if (expectedString)
@@ -85,6 +78,18 @@ static void _ATCommandSend(const char *cmd)
     SerialIO_Print_Expect(io, cmd);
 }
 
+static void _ResponseContainsGivenPhraseAt(const char *phrase, int index)
+{
+    findSubstringIndex_ExpectAndReturn(expected_response, phrase, index);
+}
+
+void test_CreateSucceeds(void)
+{
+    TEST_ASSERT_NOT_NULL(modem);
+    TEST_ASSERT_EQUAL(io, modem->serial);
+    TEST_ASSERT_EQUAL(RESET_PIN, modem->resetPin);
+}
+
 void test_SendATCmd(void)
 {
     _ATCommandSend("AT+CGSN=1\r");
@@ -96,11 +101,6 @@ void test_SendATCmd(void)
     ModemController_SendATCmd(modem, "AT+CGSN=1\r");
 
     TEST_ASSERT_EQUAL_STRING(expected_response, modem->responseBuffer);
-}
-
-void _ResponseContainsGivenPhraseAt(const char *phrase, int index)
-{
-    findSubstringIndex_ExpectAndReturn(expected_response, phrase, index);
 }
 
 void test_RebootUE(void)
