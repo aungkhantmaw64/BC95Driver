@@ -38,21 +38,21 @@ ModemController ModemController_Create(SerialIO_t serial, int resetPin);
 /**
  * @brief Free the modem controller and its memory allocations
  *
- * @param modem The modem
+ * @param modem The pointer to the modem controller struct
  */
 void ModemController_Destroy(ModemController modem);
 
 /**
- * @brief
+ * @brief Send AT command to the module interface
  *
- * @param modem
- * @param cmd
+ * @param modem The pointer to the modem controller struct
+ * @param cmd AT command
  */
-void ModemController_sendATCmd(ModemController modem, const char *cmd);
+void ModemController_SendATCmd(ModemController modem, const char *cmd);
 /**
  * @brief Reboot the modem by software
  *
- * @param modem The pointer to modem
+ * @param modem The pointer to the modem controller struct
  * @return Command reponse status
  */
 int ModemController_RebootUE(ModemController modem);
@@ -60,33 +60,42 @@ int ModemController_RebootUE(ModemController modem);
  * @brief Check if the connection to the modem is correct
  *        and ready to receive commands
  *
- * @param modem The pointer to modem
+ * @param modem The pointer to the modem controller struct
  * @return 1 if ready. 0 if not.
  */
 int ModemController_IsReady(ModemController modem);
 /**
  * @brief Set the UE phone function
  *
- * @param modem The pointer to modem
+ * @param modem The pointer to the modem controller struct
  * @param mode Functionality level
  * @return Command response status
  */
 int ModemController_SetUEFunction(ModemController modem, UEFunction_t mode);
 
 /**
- * @brief Request Module's IMEI
+ * @brief Request the module's international mobile equipment identity (IMEI)
  *
- * @param modem The pointer to modem
- * @param buffer Buffer to store IMEI
+ * @param modem The pointer to the modem controller struct
+ * @param buffer Destination buffer to store IMEI
  * @return Command response status
  */
 int ModemController_GetIMEI(ModemController modem, char *dest);
 
 /**
- * @brief
+ * @brief Get the module's international mobile subscriber identity (IMSI)
  *
- * @param modem
- * @return int
+ * @param modem The pointer to the modem controller struct
+ * @param dest Destination buffer to store IMSI
+ * @return Command response status
+ */
+int ModemController_GetIMSI(ModemController modem, char *dest);
+
+/**
+ * @brief Check if the modem is attached to the network
+ *
+ * @param modem The pointer to the modem controller struct
+ * @return 1 if it is connected, 0 otherwise.
  */
 int ModemController_IsNetworkConnected(ModemController modem);
 
