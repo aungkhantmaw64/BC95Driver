@@ -21,9 +21,6 @@ The entire driver is designed using mock objects and test driven development wit
 
 ```mermaid
 classDiagram
-    class ModemControllerTest{
-
-    }
 
     class ModemController{
         +Create(SerialIO_t serial, int resetPin)
@@ -58,17 +55,9 @@ classDiagram
     +IsAvailable() int
     }
 
-    class BC95{
-
-    }
-    class SIM7020E{
-
-    }
-    ModemControllerTest --|> ModemController
-    ModemControllerTest --|> FakeTimeService
     ModemController --* SerialIO: uses
-    SerialIO <-- BC95: implements
-    SerialIO <-- SIM7020E: implements
+    SerialIO <-- MockSerialIO: implements
+    SerialIO <-- DeviceClass: implements
     ModemController --* TimeService: uses
     TimeService <-- FakeTimeService: implements
 
