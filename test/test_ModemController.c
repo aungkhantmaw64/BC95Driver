@@ -2,7 +2,7 @@
 
 #include "unity.h"
 #include <stdlib.h>
-#include "Modem.h"
+#include "ModemController.h"
 #include "mock_SerialIO.h"
 #include "FakeTimeService.h"
 #include "mock_SubStringSearch.h"

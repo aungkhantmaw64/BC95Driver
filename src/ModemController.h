@@ -92,11 +92,20 @@ int ModemController_GetIMEI(ModemController modem, char *dest);
 int ModemController_GetIMSI(ModemController modem, char *dest);
 
 /**
+ * @brief Get the modem's network registration status
+ *
+ * @param modem The pointer to the modem controller struct
+ * @return Network registration status
+ */
+int ModemController_GetNetworkRegiStat(ModemController modem);
+
+/**
  * @brief Check if the modem is attached to the network
  *
  * @param modem The pointer to the modem controller struct
  * @return 1 if it is connected, 0 otherwise.
  */
+
 int ModemController_IsNetworkConnected(ModemController modem);
 
 #endif // MODEM_H
