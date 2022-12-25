@@ -21,9 +21,6 @@ The entire driver is designed using mock objects and test driven development wit
 ## Architecture
 
 ```mermaid
----
-UML Diagram
----
 classDiagram
     ModemController *-- SerialIO: uses
     SerialIO <|.. ESP32SerialIO: implements
