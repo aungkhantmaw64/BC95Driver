@@ -28,7 +28,6 @@ classDiagram
     TimeService <|.. FakeTimeService: implements
     TimeService <|.. RTOSTimeService: implements
     TimeService <|.. RTCTimeService: implements
-    note for TimeService "Used for monitoring timeout for responses during AT commands"
 ```
 ## Supported Devices
 - [Quectel's BC95-G](https://www.mikroe.com/nb-iot-click)
