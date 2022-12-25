@@ -15,6 +15,8 @@ ModemController ModemController_Create(SerialIO_t serial, int resetPin)
     ModemController modem = calloc(1, sizeof(struct ModemControllerStruct));
     modem->serial = serial;
     modem->resetPin = resetPin;
+    modem->netstat.mode = -1;
+    modem->netstat.stat = -1;
     return modem;
 }
 
@@ -133,6 +135,40 @@ int ModemController_GetIMSI(ModemController modem, char *dest)
         {
             dest[idx - 2] = modem->responseBuffer[idx];
             idx++;
+        }
+        return resStatus;
+    }
+}
+
+int ModemController_GetNetworkRegiStat(ModemController modem)
+{
+    ModemController_SendATCmd(modem, "AT+CEREG?\r");
+    int resStatus = _checkResponseStatus(modem, "OK");
+    if (resStatus != CMD_SUCCESS)
+    {
+        return resStatus;
+    }
+    else
+    {
+        char status[10];
+        memset(status, 0, 10);
+        _getSubstring(modem->responseBuffer, "+CEREG:", '\r', status);
+        if (status[0] == '0')
+        {
+            modem->netstat.mode = UE_NETWORK_MODE_REGISTRATION_DISABLED;
+        }
+        else
+        {
+            modem->netstat.mode = UE_NETWORK_MODE_REGISTRATION_ENABLED;
+        }
+
+        if (status[2] == '0')
+        {
+            modem->netstat.stat = UE_NETWORK_STATUS_NOT_REGISTERED;
+        }
+        else
+        {
+            modem->netstat.stat = UE_NETWORK_STATUS_REGISTERED;
         }
         return resStatus;
     }

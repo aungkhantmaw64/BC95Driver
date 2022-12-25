@@ -18,6 +18,24 @@ typedef enum UEFunctionEnum
     UE_LEVEL_FULL,
 } UEFunction_t; /* UE Functionality Level */
 
+typedef enum UENetworkRegistrationMode
+{
+    UE_NETWORK_MODE_REGISTRATION_DISABLED = 0,
+    UE_NETWORK_MODE_REGISTRATION_ENABLED = 1
+} UENetworkRegistrationMode_t;
+
+typedef enum UENetworkStatus
+{
+    UE_NETWORK_STATUS_NOT_REGISTERED = 0,
+    UE_NETWORK_STATUS_REGISTERED = 1
+} NetworkStatus_t;
+
+typedef struct NetworkRegistrationStatus
+{
+    UENetworkRegistrationMode_t mode;
+    int stat;
+} NetworkRegistrationStatus_t;
+
 typedef struct ModemControllerStruct *ModemController;
 
 struct ModemControllerStruct
@@ -25,6 +43,7 @@ struct ModemControllerStruct
     SerialIO_t serial;
     int resetPin;
     char responseBuffer[MAX_BUFFER_SIZE];
+    NetworkRegistrationStatus_t netstat;
 }; /* Struct containing modem infos*/
 
 /**
@@ -95,7 +114,7 @@ int ModemController_GetIMSI(ModemController modem, char *dest);
  * @brief Get the modem's network registration status
  *
  * @param modem The pointer to the modem controller struct
- * @return Network registration status
+ * @return Command response status
  */
 int ModemController_GetNetworkRegiStat(ModemController modem);
 

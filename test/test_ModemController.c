@@ -192,7 +192,7 @@ void test_GetModuleIMSI_Succeeds(void)
     TEST_ASSERT_EQUAL_STRING("460111174590523", imsi);
 }
 
-void test_ModemControllerIsConnectedToNetwork(void)
+void test_IsConnectedToNetwork(void)
 {
     _ATCommandSend("AT+CGATT?\r");
     _ModuleRespondBackWith("\r\n");
@@ -209,6 +209,27 @@ void test_ModemControllerIsConnectedToNetwork(void)
     int retval = ModemController_IsNetworkConnected(modem);
 
     TEST_ASSERT_TRUE(retval);
+}
+
+void test_NetworkRegistrationDisabled_SinceAlreadyRegistered(void)
+{
+    _ATCommandSend("AT+CEREG?\r");
+    _ModuleRespondBackWith("\r\n");
+    _ModuleRespondBackWith("+CEREG:0,1\r\n");
+    _ModuleRespondBackWith("\r\n");
+    _ModuleRespondBackWith("OK\r\n");
+    _ModuleRespondBackWith(NULL);
+
+    int okIndex = strlen(expected_response) - strlen("OK\r\n");
+
+    _ResponseContainsGivenPhraseAt("OK", okIndex);
+    _ResponseContainsGivenPhraseAt("+CEREG:", 2);
+
+    int retval = ModemController_GetNetworkRegiStat(modem);
+
+    TEST_ASSERT_EQUAL(CMD_SUCCESS, retval);
+    TEST_ASSERT_EQUAL_INT(UE_NETWORK_MODE_REGISTRATION_DISABLED, modem->netstat.mode);
+    TEST_ASSERT_EQUAL_INT(UE_NETWORK_STATUS_REGISTERED, modem->netstat.stat);
 }
 
 #endif // TEST
