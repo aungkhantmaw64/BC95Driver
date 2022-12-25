@@ -15,8 +15,9 @@ ModemController ModemController_Create(SerialIO_t serial, int resetPin)
     ModemController modem = calloc(1, sizeof(struct ModemControllerStruct));
     modem->serial = serial;
     modem->resetPin = resetPin;
-    modem->netstat.mode = -1;
-    modem->netstat.stat = -1;
+    modem->netstat.mode = 0;
+    modem->netstat.stat = 0;
+    modem->netstat.conn = 0;
     return modem;
 }
 
@@ -111,23 +112,19 @@ int ModemController_GetIMEI(ModemController modem, char *dest)
 {
     ModemController_SendATCmd(modem, "AT+CGSN=1\r");
     int resStatus = _checkResponseStatus(modem, "OK");
-    if (resStatus != CMD_SUCCESS)
-        return resStatus;
-    else
+    if (resStatus == CMD_SUCCESS)
     {
         _clearBuffer(dest);
         _getSubstring(modem->responseBuffer, "+CGSN:", '\n', dest);
-        return resStatus;
     }
+    return resStatus;
 }
 
 int ModemController_GetIMSI(ModemController modem, char *dest)
 {
     ModemController_SendATCmd(modem, "AT+CIMI\r");
     int resStatus = _checkResponseStatus(modem, "OK");
-    if (resStatus != CMD_SUCCESS)
-        return resStatus;
-    else
+    if (resStatus == CMD_SUCCESS)
     {
         _clearBuffer(dest);
         int idx = 2; /* Starts with 2 since 0 and 1 are \r\n*/
@@ -136,55 +133,35 @@ int ModemController_GetIMSI(ModemController modem, char *dest)
             dest[idx - 2] = modem->responseBuffer[idx];
             idx++;
         }
-        return resStatus;
     }
+    return resStatus;
 }
 
 int ModemController_GetNetworkRegiStat(ModemController modem)
 {
     ModemController_SendATCmd(modem, "AT+CEREG?\r");
     int resStatus = _checkResponseStatus(modem, "OK");
-    if (resStatus != CMD_SUCCESS)
-    {
-        return resStatus;
-    }
-    else
+    if (resStatus == CMD_SUCCESS)
     {
         char status[10];
         memset(status, 0, 10);
         _getSubstring(modem->responseBuffer, "+CEREG:", '\r', status);
-        if (status[0] == '0')
-        {
-            modem->netstat.mode = UE_NETWORK_MODE_REGISTRATION_DISABLED;
-        }
-        else
-        {
-            modem->netstat.mode = UE_NETWORK_MODE_REGISTRATION_ENABLED;
-        }
-
-        if (status[2] == '0')
-        {
-            modem->netstat.stat = UE_NETWORK_STATUS_NOT_REGISTERED;
-        }
-        else
-        {
-            modem->netstat.stat = UE_NETWORK_STATUS_REGISTERED;
-        }
-        return resStatus;
+        modem->netstat.mode = (OperationModeBit)status[0];
+        modem->netstat.stat = (RegistrationStatusBit)status[2];
     }
+    return resStatus;
 }
 
 int ModemController_IsNetworkConnected(ModemController modem)
 {
     ModemController_SendATCmd(modem, "AT+CGATT?\r");
     int resStatus = _checkResponseStatus(modem, "OK");
-    if (resStatus != CMD_SUCCESS)
-        return 0;
-    else
+    if (resStatus == CMD_SUCCESS)
     {
         char state[2];
         memset(state, 0, 2);
         _getSubstring(modem->responseBuffer, "+CGATT:", '\r', state);
-        return (strcmp("1", state) == 0);
+        return ((ConnectionStatusBit)state[0] == UE_NETWORK_CONNECTED);
     }
+    return 0;
 }

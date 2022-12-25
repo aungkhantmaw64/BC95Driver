@@ -18,22 +18,29 @@ typedef enum UEFunctionEnum
     UE_LEVEL_FULL,
 } UEFunction_t; /* UE Functionality Level */
 
-typedef enum UENetworkRegistrationMode
+typedef enum RegistrationMode
 {
-    UE_NETWORK_MODE_REGISTRATION_DISABLED = 0,
-    UE_NETWORK_MODE_REGISTRATION_ENABLED = 1
-} UENetworkRegistrationMode_t;
+    UE_NETWORK_MODE_REGISTRATION_DISABLED = '0',
+    UE_NETWORK_MODE_REGISTRATION_ENABLED = '1'
+} OperationModeBit;
 
-typedef enum UENetworkStatus
+typedef enum RegistrationStatus
 {
-    UE_NETWORK_STATUS_NOT_REGISTERED = 0,
-    UE_NETWORK_STATUS_REGISTERED = 1
-} NetworkStatus_t;
+    UE_NETWORK_STATUS_NOT_REGISTERED = '0',
+    UE_NETWORK_STATUS_REGISTERED = '1'
+} RegistrationStatusBit;
 
-typedef struct NetworkRegistrationStatus
+typedef enum ConnectionStatus
 {
-    UENetworkRegistrationMode_t mode;
-    int stat;
+    UE_NETWORK_DISCONNECTED = '0',
+    UE_NETWORK_CONNECTED = '1',
+} ConnectionStatusBit;
+
+typedef struct UENetworkRegistrationStatus
+{
+    OperationModeBit mode;
+    RegistrationStatusBit stat;
+    ConnectionStatusBit conn;
 } NetworkRegistrationStatus_t;
 
 typedef struct ModemControllerStruct *ModemController;
